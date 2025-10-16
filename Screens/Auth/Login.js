@@ -217,7 +217,7 @@
 //     backgroundColor: "#1a1a40",
 //     borderRadius: 40,
 //     padding: 15,
-//     shadowColor: "#000",
+//     shadowColor: "#161515ff",
 //     shadowOffset: { width: 0, height: 3 },
 //     shadowOpacity: 0.2,
 //     shadowRadius: 5,
@@ -241,70 +241,34 @@
 // });
 
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Alert,
-  Dimensions,
-} from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as LocalAuthentication from "expo-local-authentication";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-const { height } = Dimensions.get("window");
+import { useNavigation } from "@react-navigation/native";
 
 export default function Login() {
   const navigation = useNavigation();
 
-  // 👇 Biometric / Face ID authentication
   const authenticateUser = async () => {
     try {
-      const hasHardware = await LocalAuthentication.hasHardwareAsync();
-      if (!hasHardware) {
-        Alert.alert(
-          "Error",
-          "Your device does not support Face ID / biometrics."
-        );
-        return;
-      }
-
-      const supported =
-        await LocalAuthentication.supportedAuthenticationTypesAsync();
-      if (supported.length === 0) {
-        Alert.alert("Error", "No biometric authentication available.");
-        return;
-      }
-
       const result = await LocalAuthentication.authenticateAsync({
         promptMessage: "Authenticate to login",
-        fallbackLabel: "Enter Passcode",
       });
 
       if (result.success) {
-        navigation.navigate("Home");
+        navigation.navigate("HomeScreen");
       } else {
         Alert.alert("Authentication Failed", "Please try again.");
       }
     } catch (error) {
-      console.error(error);
-      Alert.alert("Error", "Something went wrong during authentication.");
+      Alert.alert("Error", "Something went wrong.");
+      console.log(error);
     }
   };
 
-  // 👇 Gesture only for the small swipe area
-  const swipeGesture = Gesture.Pan().onEnd((e) => {
-    if (e.translationY < -60) {
-      authenticateUser();
-    }
-  });
-
   return (
     <SafeAreaView style={styles.container}>
-      {/* Logo */}
       <View style={styles.logoContainer}>
         <Text style={styles.logoText}>
           PAY<Text style={{ color: "#d72638" }}>NOW</Text>
@@ -312,23 +276,19 @@ export default function Login() {
         <Text style={styles.subtitle}>EASY & AFFORDABLE BANKING</Text>
       </View>
 
-      {/* 👇 Wrap GestureDetector only around swipe zone */}
-      <GestureDetector gesture={swipeGesture}>
-        <View style={styles.swipeZone}>
-          <View style={styles.swipeButton}>
-            <Ionicons name="arrow-up" size={22} color="#fff" />
-          </View>
-          <Text style={styles.swipeText}>Swipe up to login</Text>
+      <TouchableOpacity
+        style={styles.swipeContainer}
+        onPress={authenticateUser}
+      >
+        <View style={styles.swipeButton}>
+          <Ionicons name="arrow-up" size={22} color="#fff" />
         </View>
-      </GestureDetector>
+        <Text style={styles.swipeText}>Tap to login</Text>
+      </TouchableOpacity>
 
-      {/* Bottom Links */}
       <View style={styles.bottomLinks}>
         <Text style={styles.linkText}>More</Text>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("SignUp")}
-          style={styles.nextButton}
-        >
+        <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
           <Text style={styles.linkText}>Sign Up</Text>
         </TouchableOpacity>
       </View>
@@ -359,18 +319,13 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     marginTop: 4,
   },
-  swipeZone: {
+  swipeContainer: {
     alignItems: "center",
-    marginBottom: height * 0.15, // keeps it above edge
   },
   swipeButton: {
     backgroundColor: "#1a1a40",
     borderRadius: 40,
     padding: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
     elevation: 5,
   },
   swipeText: {
