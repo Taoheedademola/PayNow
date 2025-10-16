@@ -1,44 +1,189 @@
-// // App.js
+// // import React from "react";
+// // import { View, Text, StyleSheet } from "react-native";
+// // import { Ionicons } from "@expo/vector-icons";
+// // import { Gesture, GestureDetector } from "react-native-gesture-handler";
+// // import { useNavigation } from "@react-navigation/native";
+// // import { SafeAreaView } from "react-native-safe-area-context";
+
+// // export default function Login() {
+// //   const navigation = useNavigation();
+
+// //   // Detect upward swipe within app, not the screen edge
+// //   const swipeGesture = Gesture.Pan().onEnd((e) => {
+// //     if (e.translationY < -50) {
+// //       // detect swipe up
+// //       navigation.navigate("Onboarding");
+// //     }
+// //   });
+
+// //   return (
+// //     <GestureDetector gesture={swipeGesture}>
+// //       <SafeAreaView style={styles.container}>
+// //         <View style={styles.logoContainer}>
+// //           <Text style={styles.logoText}>
+// //             PAY<Text style={{ color: "#d72638" }}>NOW</Text>
+// //           </Text>
+// //           <Text style={styles.subtitle}>EASY & AFFORDABLE BANKING</Text>
+// //         </View>
+
+// //         <View style={styles.swipeContainer}>
+// //           <View style={styles.swipeButton}>
+// //             <Ionicons name="arrow-up" size={22} color="#fff" />
+// //           </View>
+// //           <Text style={styles.swipeText}>Swipe up to login</Text>
+// //         </View>
+
+// //         <View style={styles.bottomLinks}>
+// //           <Text style={styles.linkText}>More</Text>
+// //           <TouchableOpacity
+// //             onPress={() => {navigation.navigate("sign up")}}
+// //             style={styles.nextButton}
+// //           >
+// //             <Text style={styles.linkText}>Sign Up</Text>
+// //           </TouchableOpacity>
+// //         </View>
+// //       </SafeAreaView>
+// //     </GestureDetector>
+// //   );
+// // }
+
+// // const styles = StyleSheet.create({
+// //   container: {
+// //     flex: 1,
+// //     backgroundColor: "#fff",
+// //     alignItems: "center",
+// //     justifyContent: "space-between",
+// //     paddingVertical: 80,
+// //   },
+// //   logoContainer: {
+// //     alignItems: "center",
+// //     marginTop: 60,
+// //   },
+// //   logoText: {
+// //     fontSize: 28,
+// //     fontWeight: "bold",
+// //     color: "#1a1a40",
+// //   },
+// //   subtitle: {
+// //     color: "#d72638",
+// //     fontSize: 10,
+// //     letterSpacing: 1,
+// //     marginTop: 4,
+// //   },
+// //   swipeContainer: {
+// //     alignItems: "center",
+// //   },
+// //   swipeButton: {
+// //     backgroundColor: "#1a1a40",
+// //     borderRadius: 40,
+// //     padding: 15,
+// //     shadowColor: "#000",
+// //     shadowOffset: { width: 0, height: 3 },
+// //     shadowOpacity: 0.2,
+// //     shadowRadius: 5,
+// //     elevation: 5,
+// //   },
+// //   swipeText: {
+// //     marginTop: 10,
+// //     color: "#1a1a40",
+// //     fontSize: 14,
+// //   },
+// //   bottomLinks: {
+// //     width: "80%",
+// //     flexDirection: "row",
+// //     justifyContent: "space-between",
+// //     marginBottom: 40,
+// //   },
+// //   linkText: {
+// //     color: "#1a1a40",
+// //     fontSize: 14,
+// //   },
+// // });
+
 // import React from "react";
-// import {
-//   View,
-//   Text,
-//   Image,
-//   TouchableOpacity,
-//   StyleSheet,
-//   SafeAreaView,
-// } from "react-native";
+// import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 // import { Ionicons } from "@expo/vector-icons";
+// import * as LocalAuthentication from "expo-local-authentication";
+// import { Gesture, GestureDetector } from "react-native-gesture-handler";
+// import { useNavigation } from "@react-navigation/native";
+// import { SafeAreaView } from "react-native-safe-area-context";
 
 // export default function Login() {
+//   const navigation = useNavigation();
+
+//   // 👇 Face ID / Biometric Authentication
+//   const authenticateUser = async () => {
+//     try {
+//       const hasHardware = await LocalAuthentication.hasHardwareAsync();
+//       if (!hasHardware) {
+//         Alert.alert(
+//           "Error",
+//           "Your device does not support Face ID / biometrics."
+//         );
+//         return;
+//       }
+
+//       const supportedTypes =
+//         await LocalAuthentication.supportedAuthenticationTypesAsync();
+//       if (supportedTypes.length === 0) {
+//         Alert.alert("Error", "No biometric authentication available.");
+//         return;
+//       }
+
+//       const result = await LocalAuthentication.authenticateAsync({
+//         promptMessage: "Authenticate to login",
+//         fallbackLabel: "Enter Passcode",
+//       });
+
+//       if (result.success) {
+//         navigation.navigate("Home"); // ✅ Navigate after Face ID success
+//       } else {
+//         Alert.alert("Authentication Failed", "Please try again.");
+//       }
+//     } catch (error) {
+//       console.error(error);
+//       Alert.alert("Error", "Something went wrong during authentication.");
+//     }
+//   };
+
+//   // 👇 Detect swipe up and trigger Face ID
+//   const swipeGesture = Gesture.Pan().onEnd((e) => {
+//     if (e.translationY < -50) {
+//       authenticateUser();
+//     }
+//   });
+
 //   return (
-//     <SafeAreaView style={styles.container}>
-//       {/* Logo */}
-//       <View style={styles.logoContainer}>
-//         <Text style={styles.logoText}>
-//           PAY<Text style={{ color: "#d72638" }}>NOW</Text>
-//         </Text>
-//         <Text style={styles.subtitle}>EASY & AFFORDABLE BANKING</Text>
-//       </View>
+//     <GestureDetector gesture={swipeGesture}>
+//       <SafeAreaView style={styles.container}>
+//         {/* Logo */}
+//         <View style={styles.logoContainer}>
+//           <Text style={styles.logoText}>
+//             PAY<Text style={{ color: "#d72638" }}>NOW</Text>
+//           </Text>
+//           <Text style={styles.subtitle}>EASY & AFFORDABLE BANKING</Text>
+//         </View>
 
-//       {/* Swipe to Login Button */}
-//       <View style={styles.swipeContainer}>
-//         <TouchableOpacity style={styles.swipeButton}>
-//           <Ionicons name="arrow-up" size={22} color="#fff" />
-//         </TouchableOpacity>
-//         <Text style={styles.swipeText}>Swipe up to login</Text>
-//       </View>
+//         {/* Swipe Button */}
+//         <View style={styles.swipeContainer}>
+//           <View style={styles.swipeButton}>
+//             <Ionicons name="arrow-up" size={22} color="#fff" />
+//           </View>
+//           <Text style={styles.swipeText}>Swipe up to login</Text>
+//         </View>
 
-//       {/* Bottom Links */}
-//       <View style={styles.bottomLinks}>
-//         <TouchableOpacity>
+//         {/* Bottom Links */}
+//         <View style={styles.bottomLinks}>
 //           <Text style={styles.linkText}>More</Text>
-//         </TouchableOpacity>
-//         <TouchableOpacity>
-//           <Text style={styles.linkText}>Sign Up</Text>
-//         </TouchableOpacity>
-//       </View>
-//     </SafeAreaView>
+//           <TouchableOpacity
+//             onPress={() => navigation.navigate("SignUp")}
+//             style={styles.nextButton}
+//           >
+//             <Text style={styles.linkText}>Sign Up</Text>
+//           </TouchableOpacity>
+//         </View>
+//       </SafeAreaView>
+//     </GestureDetector>
 //   );
 // }
 
@@ -96,48 +241,98 @@
 // });
 
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  Dimensions,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { GestureDetector, Gesture } from "react-native-gesture-handler";
+import * as LocalAuthentication from "expo-local-authentication";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+const { height } = Dimensions.get("window");
 
 export default function Login() {
   const navigation = useNavigation();
 
-  // detect swipe up gesture
-  const swipeUp = Gesture.Fling()
-    .direction(Gesture.DIRECTION_UP)
-    .onEnd(() => {
-      navigation.navigate("Onboarding"); // 👈 change "Home" to your next screen
-    });
+  // 👇 Biometric / Face ID authentication
+  const authenticateUser = async () => {
+    try {
+      const hasHardware = await LocalAuthentication.hasHardwareAsync();
+      if (!hasHardware) {
+        Alert.alert(
+          "Error",
+          "Your device does not support Face ID / biometrics."
+        );
+        return;
+      }
+
+      const supported =
+        await LocalAuthentication.supportedAuthenticationTypesAsync();
+      if (supported.length === 0) {
+        Alert.alert("Error", "No biometric authentication available.");
+        return;
+      }
+
+      const result = await LocalAuthentication.authenticateAsync({
+        promptMessage: "Authenticate to login",
+        fallbackLabel: "Enter Passcode",
+      });
+
+      if (result.success) {
+        navigation.navigate("Home");
+      } else {
+        Alert.alert("Authentication Failed", "Please try again.");
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "Something went wrong during authentication.");
+    }
+  };
+
+  // 👇 Gesture only for the small swipe area
+  const swipeGesture = Gesture.Pan().onEnd((e) => {
+    if (e.translationY < -60) {
+      authenticateUser();
+    }
+  });
 
   return (
-    <GestureDetector gesture={swipeUp}>
-      <SafeAreaView style={styles.container}>
-        {/* Logo */}
-        <View style={styles.logoContainer}>
-          <Text style={styles.logoText}>
-            PAY<Text style={{ color: "#d72638" }}>NOW</Text>
-          </Text>
-          <Text style={styles.subtitle}>EASY & AFFORDABLE BANKING</Text>
-        </View>
+    <SafeAreaView style={styles.container}>
+      {/* Logo */}
+      <View style={styles.logoContainer}>
+        <Text style={styles.logoText}>
+          PAY<Text style={{ color: "#d72638" }}>NOW</Text>
+        </Text>
+        <Text style={styles.subtitle}>EASY & AFFORDABLE BANKING</Text>
+      </View>
 
-        {/* Swipe to Login Button */}
-        <View style={styles.swipeContainer}>
+      {/* 👇 Wrap GestureDetector only around swipe zone */}
+      <GestureDetector gesture={swipeGesture}>
+        <View style={styles.swipeZone}>
           <View style={styles.swipeButton}>
             <Ionicons name="arrow-up" size={22} color="#fff" />
           </View>
           <Text style={styles.swipeText}>Swipe up to login</Text>
         </View>
+      </GestureDetector>
 
-        {/* Bottom Links */}
-        <View style={styles.bottomLinks}>
-          <Text style={styles.linkText}>More</Text>
+      {/* Bottom Links */}
+      <View style={styles.bottomLinks}>
+        <Text style={styles.linkText}>More</Text>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("SignUp")}
+          style={styles.nextButton}
+        >
           <Text style={styles.linkText}>Sign Up</Text>
-        </View>
-      </SafeAreaView>
-    </GestureDetector>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 }
 
@@ -164,8 +359,9 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     marginTop: 4,
   },
-  swipeContainer: {
+  swipeZone: {
     alignItems: "center",
+    marginBottom: height * 0.15, // keeps it above edge
   },
   swipeButton: {
     backgroundColor: "#1a1a40",
